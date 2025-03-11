@@ -18,6 +18,7 @@ runs:
   steps:
   - name: Post Comment
     if: inputs.assessment == 'true'
+    shell: bash
     run: |
       curl -L -X POST \
         -H "Accept: application/vnd.github+json" \
@@ -27,6 +28,7 @@ runs:
 
   - name: Post Fail Comment
     if: inputs.assessment != 'true'
+    shell: bash
     run: |
       curl -L -X POST \
         -H "Accept: application/vnd.github+json" \
@@ -36,7 +38,6 @@ runs:
 
   - name: Merge PR
     if: inputs.assessment == 'true'
+    shell: bash
     run: |
       gh pr merge ${{ inputs.issue-number }} --merge --admin --repo ${{ github.repository }}
-    env:
-      GITHUB_TOKEN: ${{ inputs.token }}
