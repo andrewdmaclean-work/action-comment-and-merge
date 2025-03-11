@@ -16,25 +16,26 @@ inputs:
 runs:
   using: "composite"
   steps:
-  - name: Post Comment
-    if: inputs.assessment == 'true'
+  - name: Post Correct Comment
+    if: inputs.assessment == 'correct'
     shell: bash
     run: |
       curl -L -X POST \
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${{ inputs.token }}" \
-        https://api.github.com/repos/${{ github.repository }}/issues/${{ inputs.issue-number }}/comments \
-        -d $(jq -n --arg body "🎉 Congratulations! You successfully completed step 1. Go back to the README in the main branch to continue." '{body: $body}')
-
-  - name: Post Fail Comment
-    if: inputs.assessment != 'true'
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        "https://api.github.com/repos/${{ github.repository }}/issues/${{ inputs.issue-number }}/comments" \
+        -d '{"body":"🎉 Congratulations! You successfully completed step 1. Go back to the README in the main branch to continue."}'
+  - name: Post !Correct Comment
+    if: inputs.assessment != 'correct'
     shell: bash
     run: |
-      curl -L -X POST \
-        -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${{ inputs.token }}" \
-        https://api.github.com/repos/${{ github.repository }}/issues/${{ inputs.issue-number }}/comments \
-        -d $(jq -n --arg body "🚫 The solution did not pass the validation check. Please try again. **Reason:** ${{ inputs.reason }}" '{body: $body}')
+     curl -L -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ inputs.token }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ inputs.issue-number }}/comments" \
+            -d "{\"body\":\"🚫 The solution did not pass the validation check. Please try again. **Reason:** ${{ inputs.reason }}\"}"
 
   - name: Merge PR
     if: inputs.assessment == 'true'
