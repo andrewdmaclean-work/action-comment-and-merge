@@ -1,4 +1,4 @@
-name: Comment and Merge PR
+name: Comment in PR
 description: Posts a comment and merges the PR based on the assessment result
 inputs:
   token:
@@ -36,9 +36,3 @@ runs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/${{ github.repository }}/issues/${{ inputs.issue-number }}/comments" \
             -d "{\"body\":\"🚫 The solution did not pass the validation check. Please try again. **Reason:** ${{ inputs.reason }}\"}"
-
-  - name: Merge PR
-    if: inputs.assessment == 'correct'
-    shell: bash
-    run: |
-      gh pr merge ${{ inputs.issue-number }} --merge --admin --repo ${{ github.repository }}
