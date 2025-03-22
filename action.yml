@@ -38,7 +38,7 @@ runs:
             -d "{\"body\":\"🚫 The solution did not pass the validation check. Please try again. **Reason:** ${{ inputs.reason }}\"}"
 
   - name: Merge PR
-    if: inputs.assessment == 'true'
+    if: inputs.assessment == 'correct'
     shell: bash
     run: |
       gh pr merge ${{ inputs.issue-number }} --merge --admin --repo ${{ github.repository }}
